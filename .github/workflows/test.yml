@@ -1,0 +1,35 @@
+name: Test Pipeline
+run-name: Triggered by ${{ github.event_name }} on env ${{ github.environment }}
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches-ignore:
+    - main
+
+  pull_request:
+    branches:
+    - main
+
+env:
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    environment: QA
+
+    steps:
+    - name: Clonar el Repo
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Test run JS
+      run: |
+        npm test
