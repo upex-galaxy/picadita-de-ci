@@ -1,12 +1,21 @@
 name: Test Pipeline
-run-name: Triggered by ${{ github.event_name }} on env ${{ github.environment }}
+run-name: Triggered by ${{ github.event_name }} on env ${{ github.event.inputs.environment || 'QA' }}
 
 on:
   workflow_dispatch:
-
-  push:
-    branches-ignore:
-    - main
+    inputs:
+      environment:
+        description: 'Select Env to run Test'
+        required: true
+        default: 'QA'
+        type: choice
+        options:
+        - DEV
+        - SANDBOX
+        - QA
+        - UAT
+        - STAGE
+        - PROD
 
   pull_request:
     branches:
@@ -19,7 +28,7 @@ env:
 jobs:
   Test:
     runs-on: ubuntu-latest
-    environment: QA
+    environment: ${{ github.event.inputs.environment || 'QA' }}
 
     steps:
     - name: Clonar el Repo
